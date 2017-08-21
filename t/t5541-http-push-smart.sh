@@ -377,5 +377,23 @@ test_expect_success 'push status output scrubs password' '
 	grep "^To $HTTPD_URL/smart/test_repo.git" status
 '
 
+cat >"$HTTPD_DOCUMENT_ROOT_PATH/test_repo.git/hooks/update" <<EOF
+#!/bin/sh
+exit 1
+EOF
+chmod a+x "$HTTPD_DOCUMENT_ROOT_PATH/test_repo.git/hooks/update"
+
+cat >exp <<EOF
+error: failed to push some refs to '$HTTPD_URL/smart/test_repo.git'
+EOF
+
+test_expect_success 'failed push status output scrubs password' '
+	cd "$ROOT_PATH"/test_repo_clone &&
+	test_must_fail git push "$HTTPD_URL_USER_PASS/smart/test_repo.git" +HEAD:scrub_err 2>stderr &&
+	grep "^error: failed to push some refs" stderr >act &&
+	test_i18ncmp exp act
+'
+rm -f "$HTTPD_DOCUMENT_ROOT_PATH/test_repo.git/hooks/update"
+
 stop_httpd
 test_done

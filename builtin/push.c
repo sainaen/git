@@ -336,7 +336,7 @@ static int push_with_options(struct transport *transport, int flags)
 	err = transport_push(transport, refspec_nr, refspec, flags,
 			     &reject_reasons);
 	if (err != 0)
-		error(_("failed to push some refs to '%s'"), transport->url);
+		error(_("failed to push some refs to '%s'"), transport_anonymize_url(transport->url));
 
 	err |= transport_disconnect(transport);
 	if (!err)
