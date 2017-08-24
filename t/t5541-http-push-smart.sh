@@ -377,11 +377,10 @@ test_expect_success 'push status output scrubs password' '
 	grep "^To $HTTPD_URL/smart/test_repo.git" status
 '
 
-cat >exp <<EOF
-error: failed to push some refs to '$HTTPD_URL/smart/test_repo.git'
-EOF
-
 test_expect_success 'failed push status output scrubs password' '
+	cat >exp <<-\EOF &&
+	error: failed to push some refs to '\'$HTTPD_URL/smart/test_repo.git\''
+	EOF
 	write_script "$HTTPD_DOCUMENT_ROOT_PATH/test_repo.git/hooks/update" <<-\EOF &&
 	exit 1
 	EOF
