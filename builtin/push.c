@@ -335,8 +335,11 @@ static int push_with_options(struct transport *transport, int flags)
 		fprintf(stderr, _("Pushing to %s\n"), transport->url);
 	err = transport_push(transport, refspec_nr, refspec, flags,
 			     &reject_reasons);
-	if (err != 0)
-		error(_("failed to push some refs to '%s'"), transport_anonymize_url(transport->url));
+	if (err != 0) {
+		char *url = transport_anonymize_url(transport->url);
+		error(_("failed to push some refs to '%s'"), url);
+		free(url);
+	}
 
 	err |= transport_disconnect(transport);
 	if (!err)
